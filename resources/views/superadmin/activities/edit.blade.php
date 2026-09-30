@@ -1,0 +1,3 @@
+@extends('layouts.admin')
+@section('title', 'Edit Kegiatan')
+@section('content')<a href="{{ route('superadmin.catalogs.activities.index', $catalog) }}" class="text-sm text-sea">&larr; Berita & Kegiatan</a><h1 class="mt-2 text-2xl font-semibold">Edit kegiatan</h1><div class="mt-6 max-w-2xl rounded-md border border-sky bg-white p-5"><x-activity-form :action="route('superadmin.catalogs.activities.update', [$catalog, $activity])" :activity="$activity" /></div>@endsection

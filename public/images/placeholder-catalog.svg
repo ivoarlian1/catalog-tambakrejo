@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Gambar katalog belum tersedia">
+  <rect width="800" height="500" fill="#E8F4F8"/>
+  <rect x="0" y="360" width="800" height="140" fill="#F7F1E8"/>
+  <circle cx="640" cy="90" r="42" fill="#FDFBF7"/>
+  <path d="M0 300 C160 260 280 340 420 300 C560 260 680 320 800 280 L800 360 L0 360 Z" fill="#3A9B9B" opacity="0.35"/>
+  <path d="M0 330 C180 300 320 360 480 320 C640 280 720 340 800 310 L800 360 L0 360 Z" fill="#1A6B8A" opacity="0.45"/>
+  <text x="400" y="250" text-anchor="middle" fill="#0B3A4D" font-family="Arial, sans-serif" font-size="22">Foto katalog belum tersedia</text>
+</svg>
