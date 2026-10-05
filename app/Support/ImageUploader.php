@@ -55,6 +55,10 @@ class ImageUploader
             return asset($fallbackAsset);
         }
 
+        if ($this->disk() === 'public') {
+            return '/storage/'.ltrim($path, '/');
+        }
+
         return $disk->url($path);
     }
 

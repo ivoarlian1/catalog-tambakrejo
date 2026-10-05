@@ -39,7 +39,7 @@ class CatalogPhotoManagementTest extends TestCase
         $this->assertSame(2, $catalog->photos()->count());
         foreach ($catalog->photos()->get() as $photo) {
             Storage::disk('public')->assertExists($photo->file_path);
-            $this->assertStringContainsString('/storage/', $photo->url);
+            $this->assertSame('/storage/'.$photo->file_path, $photo->url);
         }
 
         $galleryPhoto = $catalog->photos()->where('type', 'gallery')->firstOrFail();
