@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
-return Application::configure(basePath: dirname(__DIR__))
+$app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
@@ -77,3 +77,17 @@ return Application::configure(basePath: dirname(__DIR__))
             return null;
         });
     })->create();
+
+if (isset($_ENV['VERCEL_URL']) || isset($_ENV['VERCEL'])) {
+    $storagePath = '/tmp/storage';
+    if (!is_dir($storagePath)) {
+        mkdir($storagePath, 0777, true);
+        mkdir($storagePath . '/framework/cache/data', 0777, true);
+        mkdir($storagePath . '/framework/views', 0777, true);
+        mkdir($storagePath . '/framework/sessions', 0777, true);
+        mkdir($storagePath . '/logs', 0777, true);
+    }
+    $app->useStoragePath($storagePath);
+}
+
+return $app;
