@@ -36,7 +36,8 @@ class SupabaseStorage
     {
         $response = $this->request()->get($this->objectInfoUrl($path));
 
-        if ($response->status() === 404) {
+        if ($response->status() === 404
+            || ($response->status() === 400 && $response->json('code') === 'NoSuchKey')) {
             return false;
         }
 

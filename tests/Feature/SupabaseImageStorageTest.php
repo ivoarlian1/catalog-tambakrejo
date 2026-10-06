@@ -48,7 +48,12 @@ class SupabaseImageStorageTest extends TestCase
         $this->configureSupabase();
         Http::preventStrayRequests();
         Http::fake([
-            'https://tambakrejo.supabase.co/storage/v1/object/info/catalog-images/*' => Http::response([], 404),
+            'https://tambakrejo.supabase.co/storage/v1/object/info/catalog-images/*' => Http::response([
+                'statusCode' => '404',
+                'error' => 'not_found',
+                'message' => 'Object not found',
+                'code' => 'NoSuchKey',
+            ], 400),
         ]);
 
         $url = app(ImageUploader::class)->url('catalogs/42/missing.png', 'images/placeholder-catalog.svg');
