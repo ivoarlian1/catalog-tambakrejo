@@ -24,19 +24,32 @@ class ImageUploader
         }
 
         $filename = Str::uuid()->toString().'.'.$extension;
+        $path = trim($directory, '/').'/'.$filename;
 
-        $path = $file->storeAs($directory, $filename, $this->disk());
+        if ($this->disk() === 'supabase') {
+            app(SupabaseStorage::class)->store($file, $path);
 
-        if (! is_string($path)) {
+            return $path;
+        }
+
+        $storedPath = $file->storeAs($directory, $filename, $this->disk());
+
+        if (! is_string($storedPath)) {
             throw new RuntimeException('Foto gagal disimpan ke filesystem.');
         }
 
-        return $path;
+        return $storedPath;
     }
 
     public function delete(?string $path): void
     {
         if ($path === null || $path === '') {
+            return;
+        }
+
+        if ($this->disk() === 'supabase') {
+            app(SupabaseStorage::class)->delete($path);
+
             return;
         }
 
@@ -47,6 +60,12 @@ class ImageUploader
     {
         if ($path === null || $path === '') {
             return asset($fallbackAsset);
+        }
+
+        if ($this->disk() === 'supabase') {
+            $storage = app(SupabaseStorage::class);
+
+            return $storage->exists($path) ? $storage->url($path) : asset($fallbackAsset);
         }
 
         $disk = Storage::disk($this->disk());

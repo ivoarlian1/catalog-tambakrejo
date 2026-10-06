@@ -7,13 +7,18 @@ return [
     | Media Disk
     |--------------------------------------------------------------------------
     |
-    | Catalog and product photos are stored through Laravel's filesystem
-    | abstraction. Local public disk is suitable for development. Production
-    | may point this at object storage (for example the s3 disk) when the
-    | filesystem is not persistently attached to a single server.
+    | Catalog and product photos use the local public disk by default.
+    | Serverless production deployments can use the Supabase Storage API
+    | through the "supabase" media disk.
     |
     */
 
     'media_disk' => env('MEDIA_DISK', 'public'),
+
+    'supabase' => [
+        'url' => env('SUPABASE_URL'),
+        'service_role_key' => env('SUPABASE_SERVICE_ROLE_KEY'),
+        'storage_bucket' => env('SUPABASE_STORAGE_BUCKET', 'catalog-images'),
+    ],
 
 ];

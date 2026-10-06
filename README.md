@@ -81,7 +81,18 @@ QR Code dapat diunduh sebagai JPEG melalui encoder QR yang ada dan PHP GD; SVG l
 
 ## File Storage
 
-Foto divalidasi sebagai JPEG, PNG, atau WebP dengan batas 2 MB per file, disimpan melalui Laravel Filesystem dengan nama acak berbasis UUID. Jalankan `php artisan storage:link` agar URL `/storage/...` bisa dibaca oleh web server. Gunakan gambar fallback saat file tidak ada. Filesystem lokal atau serverless bersifat ephemeral kecuali persistent storage dikonfigurasi; untuk production gunakan object storage atau volume persisten melalui `MEDIA_DISK`.
+Foto divalidasi sebagai JPEG, PNG, atau WebP dengan batas 2 MB per file dan disimpan dengan nama acak berbasis UUID. Di lokal, `MEDIA_DISK=public` memakai Laravel Filesystem; jalankan `php artisan storage:link` agar URL `/storage/...` bisa dibaca oleh web server. Di Vercel, gunakan Supabase Storage agar file tetap tersedia antar-invocation:
+
+1. Buat bucket `catalog-images` di Supabase Storage dan tandai sebagai **public**. Isi bucket dapat dilihat siapa pun yang memiliki URL.
+2. Dari Supabase Project Settings → API Keys, ambil URL project dan secret `service_role` legacy key. Jangan gunakan anon key, jangan beri awalan `VITE_`, dan jangan commit key ini.
+3. Tambahkan environment variables berikut di Vercel untuk environment Production:
+   - `MEDIA_DISK=supabase`
+   - `SUPABASE_URL=https://<project-ref>.supabase.co`
+   - `SUPABASE_SERVICE_ROLE_KEY=<service_role-secret>`
+   - `SUPABASE_STORAGE_BUCKET=catalog-images`
+4. Redeploy Vercel. Upload foto baru melalui halaman admin; URL gambar akan disajikan dari bucket Supabase.
+
+Foto lama yang tersimpan di filesystem sementara Vercel tidak dapat dipulihkan dari database saja. Unggah ulang file aslinya setelah konfigurasi aktif. Gunakan gambar fallback saat path database tidak menunjuk ke file yang tersedia.
 
 Navbar memakai simbol placeholder mandiri di `public/images/logo/ecatalog-mark.svg`; simbol tersebut bukan logo resmi Kelurahan dan dapat diganti dengan file logo resmi kelak. Footer publik menampilkan `© KKN GIAT 17 UNNES`.
 
