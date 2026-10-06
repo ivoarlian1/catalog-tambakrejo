@@ -26,6 +26,13 @@ $app = Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        if (isset($_ENV['IS_VERCEL'])) {
+            $middleware->trustProxies(
+                at: '*',
+                headers: Request::HEADER_X_FORWARDED_PROTO,
+            );
+        }
+
         $middleware->alias([
             'superadmin' => SuperadminMiddleware::class,
             'catalog-admin' => CatalogAdminMiddleware::class,

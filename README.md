@@ -115,4 +115,4 @@ npm run build
 php artisan migrate --force
 ```
 
-Vercel belum dikonfigurasi atau diverifikasi. Laravel membutuhkan runtime PHP yang kompatibel, database eksternal yang persisten, dan object storage/persistent storage untuk upload karena filesystem serverless bersifat ephemeral. Jangan menganggap deployment siap tanpa adapter/runtime dan uji deployment yang sesuai. Hosting PHP tradisional atau Laravel Cloud dapat dipertimbangkan; konfigurasi produksi tetap harus diuji terpisah.
+Repository ini menyertakan konfigurasi Vercel untuk runtime PHP dan file statis `public/**`. Jalankan `npm run build` dan sertakan hasil `public/build` saat deploy agar CSS/JS tersedia. Siapkan database eksternal yang persisten dan object storage/persistent storage untuk upload karena filesystem serverless bersifat ephemeral. Atur `APP_URL` di Vercel ke URL HTTPS production (contoh: `https://catalogtambakrejo.vercel.app`). Aplikasi mempercayai header protokol dari proxy hanya saat berjalan melalui entrypoint Vercel, sehingga URL aset dan tautan dibuat dengan skema HTTPS. Uji setiap deployment; hosting PHP tradisional atau Laravel Cloud juga dapat dipertimbangkan.
