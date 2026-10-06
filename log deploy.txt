@@ -1,0 +1,39 @@
+22:28:43.104 Running build in Washington, D.C., USA (East) – iad1
+22:28:43.105 Build machine configuration: 2 cores, 8 GB
+22:28:43.243 Cloning github.com/ivoarlian1/catalog-tambakrejo (Branch: main, Commit: 8bf0542)
+22:28:43.244 Previous build caches not available.
+22:28:43.571 Cloning completed: 328.000ms
+22:28:44.337 Running "vercel build"
+22:28:44.350 Vercel CLI 62.1.0
+22:28:45.475 Installing dependencies...
+22:28:49.140 
+22:28:49.140 added 96 packages in 3s
+22:28:49.140 
+22:28:49.140 41 packages are looking for funding
+22:28:49.140   run `npm fund` for details
+22:28:49.198 Running "npm run build"
+22:28:49.308 
+22:28:49.309 > build
+22:28:49.309 > vite build
+22:28:49.309 
+22:28:49.787 vite v8.3.1 building client environment for production...
+22:28:49.946 [plugin laravel:fonts] Optimized font fallbacks require the optional "fontaine" package. Install it, or set "optimizedFallbacks: false" on your fonts to disable the feature.
+22:28:49.953 transforming...
+22:28:50.109 ✓ 3 modules transformed.
+22:28:50.130 rendering chunks...
+22:28:50.141 computing gzip size...
+22:28:50.147 public/build/manifest.json                                      1.47 kB │ gzip: 0.33 kB
+22:28:50.147 public/build/fonts-manifest.json                                5.74 kB │ gzip: 0.71 kB
+22:28:50.148 public/build/assets/instrument-sans-400-normal-DRC__1Mx.woff2  16.86 kB
+22:28:50.148 public/build/assets/instrument-sans-500-normal-Dk9ku72i.woff2  17.23 kB
+22:28:50.148 public/build/assets/instrument-sans-600-normal-B7fBEWYG.woff2  17.40 kB
+22:28:50.148 public/build/assets/instrument-sans-400-normal-D1W7dsQl.woff   21.24 kB
+22:28:50.149 public/build/assets/instrument-sans-500-normal-Z6ESRlEs.woff   21.65 kB
+22:28:50.149 public/build/assets/instrument-sans-600-normal-B9e8oLYv.woff   21.67 kB
+22:28:50.149 public/build/assets/fonts-C9MNnjVw.css                          2.35 kB │ gzip: 0.38 kB
+22:28:50.149 public/build/assets/app-DYhbjyEX.css                           20.75 kB │ gzip: 5.23 kB
+22:28:50.149 public/build/assets/app-C_0y-972.js                             1.21 kB │ gzip: 0.51 kB
+22:28:50.150 
+22:28:50.150 ✓ built in 359ms
+22:28:50.203 Error: No Output Directory named "dist" found after the Build completed. Configure the Output Directory in your Project Settings. Alternatively, configure vercel.json#outputDirectory.
+22:28:50.204 Learn More: https://vercel.link/missing-public-directory
