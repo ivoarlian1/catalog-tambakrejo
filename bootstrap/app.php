@@ -78,7 +78,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
         });
     })->create();
 
-if (isset($_ENV['VERCEL_URL']) || isset($_ENV['VERCEL'])) {
+if (isset($_ENV['IS_VERCEL'])) {
     $storagePath = '/tmp/storage';
     if (!is_dir($storagePath)) {
         mkdir($storagePath, 0777, true);
