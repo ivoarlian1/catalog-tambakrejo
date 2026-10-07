@@ -51,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
                         ['label' => 'Kategori', 'url' => route('superadmin.categories.index'), 'active' => 'superadmin.categories.*'],
                         ['label' => 'Katalog', 'url' => route('superadmin.catalogs.index'), 'active' => 'superadmin.catalogs.*'],
                         ['label' => 'Catalog Admin', 'url' => route('superadmin.admins.index'), 'active' => 'superadmin.admins.*'],
+                        ['label' => 'Akun Superadmin', 'url' => route('superadmin.superadmins.index'), 'active' => 'superadmin.superadmins.*'],
                         ['label' => 'Produk', 'url' => route('superadmin.products.index'), 'active' => 'superadmin.products.*'],
                     ],
                 ]);

@@ -16,6 +16,7 @@ use App\Http\Controllers\Superadmin\ActivityController as SuperadminActivityCont
 use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardController;
 use App\Http\Controllers\Superadmin\ProductController as SuperadminProductController;
 use App\Http\Controllers\Superadmin\QrCodeController;
+use App\Http\Controllers\Superadmin\SuperadminUserController;
 use App\Http\Middleware\CatalogAdminMiddleware;
 use App\Http\Middleware\SuperadminMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -81,6 +82,8 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
 
         Route::resource('admins', CatalogAdminController::class)->except(['show']);
         Route::post('/admins/{admin}/toggle-active', [CatalogAdminController::class, 'toggleActive'])->name('admins.toggle-active');
+
+        Route::resource('superadmins', SuperadminUserController::class)->only(['index', 'create', 'store']);
     });
 });
 

@@ -1,0 +1,9 @@
+pw DB Postgree supabase: Tambakrejo15
+
+
+Cara Login super admin
+tambahkan /superadmin di path
+email: admin@example.test
+pw: password
+
+

@@ -33,6 +33,8 @@ class AdminScreensTest extends TestCase
         $this->get(route('superadmin.admins.index'))->assertOk();
         $this->get(route('superadmin.admins.create'))->assertOk();
         $this->get(route('superadmin.admins.edit', $admin))->assertOk();
+        $this->get(route('superadmin.superadmins.index'))->assertOk();
+        $this->get(route('superadmin.superadmins.create'))->assertOk();
         $this->get(route('superadmin.products.index'))->assertOk();
         $this->get(route('superadmin.catalogs.products.index', $catalog))->assertOk();
         $this->get(route('superadmin.catalogs.products.create', $catalog))->assertOk();
