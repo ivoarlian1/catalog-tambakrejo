@@ -61,7 +61,7 @@ Seeder membuat satu Superadmin, delapan katalog sample, beberapa produk UMKM, se
 
 - `/superadmin` membuka login Superadmin; dashboard ada di `/superadmin/dashboard`.
 - `/catalog-admin` membuka login Catalog Admin; dashboard ada di `/catalog-admin/dashboard`.
-- Tidak ada public registration. Superadmin membuat akun Catalog Admin dan menetapkan satu katalog, serta dapat menambah akun Superadmin lain dari menu **Akun Superadmin**.
+- Tidak ada public registration. Superadmin membuat akun Catalog Admin dan menetapkan satu katalog, serta mengelola akun Superadmin lain melalui menu **Akun Superadmin**. Superadmin tidak dapat menghapus atau menonaktifkan akunnya sendiri.
 - Akun nonaktif ditolak, login dibatasi, password di-hash, dan logout menginvalidasi session.
 - Authorization memakai middleware/policy; Catalog Admin tidak dapat mengubah `catalog_id` atau mengakses katalog pengguna lain.
 

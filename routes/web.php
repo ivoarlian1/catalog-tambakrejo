@@ -83,7 +83,9 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
         Route::resource('admins', CatalogAdminController::class)->except(['show']);
         Route::post('/admins/{admin}/toggle-active', [CatalogAdminController::class, 'toggleActive'])->name('admins.toggle-active');
 
-        Route::resource('superadmins', SuperadminUserController::class)->only(['index', 'create', 'store']);
+        Route::resource('superadmins', SuperadminUserController::class)->except(['show']);
+        Route::post('/superadmins/{superadmin}/toggle-active', [SuperadminUserController::class, 'toggleActive'])
+            ->name('superadmins.toggle-active');
     });
 });
 
