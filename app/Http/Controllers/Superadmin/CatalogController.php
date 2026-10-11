@@ -20,7 +20,7 @@ class CatalogController extends Controller
     {
         $this->authorize('viewAny', Catalog::class);
 
-        $query = Catalog::query()->with(['admin', 'category', 'coverPhoto'])->latest('id');
+        $query = Catalog::query()->with(['admin', 'category', 'coverPhoto'])->orderBy('sort_order')->orderBy('id');
 
         if ($request->filled('search')) {
             $search = $request->string('search')->toString();

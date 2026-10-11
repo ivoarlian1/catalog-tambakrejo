@@ -30,6 +30,72 @@ class PublicCatalogTest extends TestCase
         $response->assertDontSee($draft->name);
     }
 
+    public function test_public_catalog_lists_show_and_follow_the_catalog_sequence_number(): void
+    {
+        $later = Catalog::factory()->umkm()->published()->create([
+            'name' => 'Warung Urutan Kedua',
+            'sort_order' => 20,
+        ]);
+        $earlier = Catalog::factory()->umkm()->published()->create([
+            'name' => 'Warung Urutan Pertama',
+            'sort_order' => 10,
+        ]);
+
+        $this->get(route('katalog.index'))
+            ->assertSeeInOrder([$earlier->name, $later->name])
+            ->assertSee('aria-label="Nomor urut katalog 10"', false)
+            ->assertSee('aria-label="Nomor urut katalog 20"', false);
+
+        $this->get(route('katalog.bytype', 'umkm'))
+            ->assertSeeInOrder([$earlier->name, $later->name]);
+
+        $this->get(route('home'))
+            ->assertSeeInOrder([$earlier->name, $later->name]);
+    }
+
+    public function test_catalog_admin_can_change_their_catalog_sequence_number(): void
+    {
+        $catalog = Catalog::factory()->umkm()->create(['sort_order' => 30]);
+        $admin = User::factory()->catalogAdmin($catalog)->create();
+
+        $this->actingAs($admin)
+            ->get(route('catalog-admin.catalog.edit'))
+            ->assertSee('name="sort_order"', false);
+
+        $this->actingAs($admin)->put(route('catalog-admin.catalog.update'), [
+            'name' => $catalog->name,
+            'sort_order' => 12,
+            'sub_type' => $catalog->sub_type,
+            'owner_name' => $catalog->owner_name,
+            'address' => $catalog->address,
+        ])->assertRedirect(route('catalog-admin.catalog.edit'));
+
+        $this->assertDatabaseHas('catalogs', [
+            'id' => $catalog->id,
+            'sort_order' => 12,
+        ]);
+    }
+
+    public function test_catalog_sequence_number_must_be_unique(): void
+    {
+        $existing = Catalog::factory()->create(['sort_order' => 5]);
+        $admin = User::factory()->superadmin()->create();
+
+        $this->actingAs($admin)->post(route('superadmin.catalogs.store'), [
+            'name' => 'Katalog Nomor Duplikat',
+            'sort_order' => $existing->sort_order,
+            'type' => 'umkm',
+            'sub_type' => 'Kuliner',
+            'owner_name' => 'Pemilik Katalog',
+            'address' => 'Jl. Tambakrejo',
+            'status' => 'draft',
+        ])->assertSessionHasErrors([
+            'sort_order' => 'Nomor urut sudah digunakan katalog lain.',
+        ]);
+
+        $this->assertDatabaseMissing('catalogs', ['name' => 'Katalog Nomor Duplikat']);
+    }
+
     public function test_public_detail_uses_stable_slug_and_displays_text_coordinates(): void
     {
         $catalog = Catalog::factory()->umkm()->published()->create([
@@ -43,6 +109,7 @@ class PublicCatalogTest extends TestCase
         $response = $this->get(route('katalog.show', ['type' => 'umkm', 'slug' => 'warung-bu-siti']));
 
         $response->assertSee('Warung Bu Siti')
+            ->assertSee('aria-label="Nomor urut katalog '.$catalog->sort_order.'"', false)
             ->assertSee('-6.1234567, 110.1234567')
             ->assertSee('WhatsApp')
             ->assertSee('https://wa.me/628123456789', false)

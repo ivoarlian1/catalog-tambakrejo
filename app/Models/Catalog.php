@@ -24,6 +24,7 @@ class Catalog extends Model
     protected $fillable = [
         'name',
         'slug',
+        'sort_order',
         'type',
         'sub_type',
         'description',

@@ -18,6 +18,7 @@ class CatalogCoordinateTest extends TestCase
 
         $response = $this->actingAs($admin)->put(route('superadmin.catalogs.update', $catalog), [
             'name' => $catalog->name,
+            'sort_order' => $catalog->sort_order,
             'slug' => $catalog->slug,
             'type' => 'umkm',
             'sub_type' => $catalog->sub_type,
@@ -43,6 +44,7 @@ class CatalogCoordinateTest extends TestCase
 
         $response = $this->actingAs($admin)->put(route('superadmin.catalogs.update', $catalog), [
             'name' => $catalog->name,
+            'sort_order' => $catalog->sort_order,
             'slug' => $catalog->slug,
             'type' => 'umkm',
             'sub_type' => $catalog->sub_type,

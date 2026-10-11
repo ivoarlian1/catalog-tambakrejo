@@ -138,6 +138,7 @@ class DatabaseSeeder extends Seeder
 
             if ($catalog === null) {
                 $sample['slug'] = Catalog::uniqueSlugFromName($sample['name']);
+                $sample['sort_order'] = (Catalog::query()->max('sort_order') ?? 0) + 1;
                 $catalog = Catalog::query()->create($sample);
             } else {
                 $catalog->update($sample);

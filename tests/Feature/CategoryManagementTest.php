@@ -29,8 +29,9 @@ class CategoryManagementTest extends TestCase
         foreach ([0, 1] as $index) {
             $this->post(route('superadmin.catalogs.store'), [
                 'name' => 'Destinasi '.$index,
+                'sort_order' => $index + 1,
                 'type' => $category->slug,
-            'sub_type' => 'Pantai dan Wisata Bahari',
+                'sub_type' => 'Pantai dan Wisata Bahari',
                 'responsible_person' => 'Pengelola Wisata',
                 'address' => 'Kelurahan Tambakrejo',
                 'status' => 'published',
@@ -125,6 +126,7 @@ class CategoryManagementTest extends TestCase
 
         $this->actingAs($admin)->put(route('catalog-admin.catalog.update'), [
             'name' => 'Nama Pendidikan Diperbarui',
+            'sort_order' => $catalog->sort_order,
             'sub_type' => 'Sekolah Alternatif',
             'responsible_person' => 'Kepala Sekolah Baru',
             'address' => $catalog->address,

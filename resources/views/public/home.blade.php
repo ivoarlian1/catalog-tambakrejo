@@ -31,7 +31,7 @@
 </section>
 
 <section class="mx-auto max-w-6xl px-4 pb-12">
-    <h2 class="text-2xl font-semibold">Katalog Terbaru</h2>
+    <h2 class="text-2xl font-semibold">Daftar Katalog</h2>
     <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         @forelse ($latestCatalogs as $catalog)
             @include('components.catalog-card', ['catalog' => $catalog])

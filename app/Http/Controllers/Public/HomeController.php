@@ -30,7 +30,8 @@ class HomeController extends Controller
         $latestCatalogs = Catalog::query()
             ->published()
             ->with(['category', 'coverPhoto'])
-            ->latest('id')
+            ->orderBy('sort_order')
+            ->orderBy('id')
             ->take(8)
             ->get();
 

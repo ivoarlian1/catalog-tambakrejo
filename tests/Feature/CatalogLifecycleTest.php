@@ -15,8 +15,13 @@ class CatalogLifecycleTest extends TestCase
     {
         $admin = User::factory()->superadmin()->create();
 
+        $this->actingAs($admin)
+            ->get(route('superadmin.catalogs.create'))
+            ->assertSee('name="sort_order"', false);
+
         $response = $this->actingAs($admin)->post(route('superadmin.catalogs.store'), [
             'name' => 'Warung Bu Siti',
+            'sort_order' => 7,
             'type' => 'umkm',
             'sub_type' => 'Kuliner',
             'owner_name' => 'Siti Aminah',
@@ -27,9 +32,11 @@ class CatalogLifecycleTest extends TestCase
         $catalog = Catalog::query()->where('name', 'Warung Bu Siti')->firstOrFail();
         $response->assertRedirect(route('superadmin.catalogs.show', $catalog));
         $this->assertSame('warung-bu-siti', $catalog->slug);
+        $this->assertSame(7, $catalog->sort_order);
 
         $this->put(route('superadmin.catalogs.update', $catalog), [
             'name' => $catalog->name,
+            'sort_order' => 7,
             'slug' => 'changed-by-client',
             'type' => $catalog->type,
             'sub_type' => $catalog->sub_type,

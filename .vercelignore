@@ -1,0 +1,15 @@
+# Development-only tools and documentation
+/.claude/
+/.mcp.json
+/boost.json
+/.editorconfig
+/README.md
+/docs/
+/tests/
+/phpunit.xml
+/.phpunit.result.cache
+
+# Local notes and deployment logs
+/Info Admin.txt
+/log deploy.txt
+/PENTING!!!!!!!.txt

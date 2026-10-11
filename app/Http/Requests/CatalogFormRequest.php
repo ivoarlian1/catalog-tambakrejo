@@ -6,6 +6,7 @@ use App\Models\Catalog;
 use App\Models\Category;
 use App\Support\WhatsAppNumber;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 abstract class CatalogFormRequest extends FormRequest
@@ -17,6 +18,7 @@ abstract class CatalogFormRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'sort_order' => ['required', 'integer', 'min:1', Rule::unique('catalogs', 'sort_order')->ignore($catalogId)],
             'sub_type' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:5000'],
             'owner_name' => ['nullable', 'string', 'max:255'],
@@ -40,6 +42,7 @@ abstract class CatalogFormRequest extends FormRequest
     {
         return [
             'sub_type.in' => 'Subkategori tidak sesuai dengan kategori yang dipilih.',
+            'sort_order.unique' => 'Nomor urut sudah digunakan katalog lain.',
             'whatsapp' => 'Nomor WhatsApp tidak valid.',
         ];
     }

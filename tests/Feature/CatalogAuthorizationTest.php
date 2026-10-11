@@ -67,6 +67,7 @@ class CatalogAuthorizationTest extends TestCase
 
         $response = $this->actingAs($admin)->put(route('catalog-admin.catalog.update'), [
             'name' => 'Nama usaha baru',
+            'sort_order' => $ownCatalog->sort_order + 100,
             'slug' => 'stolen-slug',
             'type' => 'public_facility',
             'sub_type' => $ownCatalog->sub_type,
@@ -80,6 +81,7 @@ class CatalogAuthorizationTest extends TestCase
         $this->assertDatabaseHas('catalogs', [
             'id' => $ownCatalog->id,
             'name' => 'Nama usaha baru',
+            'sort_order' => $ownCatalog->sort_order + 100,
             'slug' => $ownCatalog->slug,
             'type' => 'umkm',
             'status' => $ownCatalog->status,

@@ -15,7 +15,7 @@ class KatalogController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Catalog::query()->published()->with(['category', 'coverPhoto'])->orderBy('name')->orderBy('id');
+        $query = Catalog::query()->published()->with(['category', 'coverPhoto'])->orderBy('sort_order')->orderBy('id');
         $this->applyFilters($query, $request);
 
         return view('public.katalog.index', [
@@ -35,7 +35,7 @@ class KatalogController extends Controller
             ->published()
             ->with(['category', 'coverPhoto'])
             ->ofType($type)
-            ->orderBy('name')
+            ->orderBy('sort_order')
             ->orderBy('id');
 
         $this->applyFilters($query, $request, $type);

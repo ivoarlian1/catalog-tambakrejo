@@ -24,7 +24,7 @@ class UpdateOwnCatalogRequest extends CatalogFormRequest
      */
     public function rules(): array
     {
-        return $this->catalogRules();
+        return $this->catalogRules($this->user()?->catalog_id);
     }
 
     public function type(): string

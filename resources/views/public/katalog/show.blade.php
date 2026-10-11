@@ -24,7 +24,10 @@
                     </ul>
                 </section>
             @endif
-            <div class="mt-6 flex flex-wrap gap-2 text-sm">
+            <div aria-label="Nomor urut katalog {{ $catalog->sort_order }}" class="mt-5 inline-flex items-center gap-3 rounded-lg border border-sky bg-white px-4 py-3 text-navy shadow-sm">
+                <span class="text-2xl font-bold leading-none">{{ $catalog->sort_order }}</span>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-2 text-sm">
                 <span class="rounded-full bg-sky px-3 py-1">{{ $catalog->type_label }}</span>
                 @if ($catalog->sub_type)<span class="rounded-full bg-sand px-3 py-1">{{ $catalog->sub_type }}</span>@endif
             </div>

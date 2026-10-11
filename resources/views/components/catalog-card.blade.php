@@ -1,6 +1,9 @@
 <article class="overflow-hidden rounded-md border border-sky bg-white">
     <img src="{{ $catalog->photo_url }}" alt="{{ $catalog->name }}" class="aspect-[16/10] w-full object-cover" width="800" height="500" loading="lazy">
     <div class="flex flex-col gap-3 p-4">
+        <div aria-label="Nomor urut katalog {{ $catalog->sort_order }}" class="inline-flex w-fit items-center gap-2 rounded-md bg-navy px-3 py-1.5 text-white">
+            <span class="text-lg font-bold leading-none">{{ $catalog->sort_order }}</span>
+        </div>
         <div class="flex flex-wrap gap-2 text-xs">
             <span class="rounded-full bg-sky px-3 py-1">{{ $catalog->type_label }}</span>
             @if ($catalog->sub_type)

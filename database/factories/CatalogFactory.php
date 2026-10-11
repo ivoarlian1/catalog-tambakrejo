@@ -22,6 +22,7 @@ class CatalogFactory extends Factory
         return [
             'name' => $name,
             'slug' => Catalog::uniqueSlugFromName($name),
+            'sort_order' => fake()->unique()->numberBetween(1, 1000000),
             'type' => $type,
             'sub_type' => $subtypes !== [] ? fake()->randomElement($subtypes) : 'Umum',
             'description' => fake()->paragraph(),
