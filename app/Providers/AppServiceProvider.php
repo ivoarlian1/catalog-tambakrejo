@@ -61,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
                 $menu = [
                     ['label' => 'Dashboard', 'url' => route('catalog-admin.dashboard'), 'active' => 'catalog-admin.dashboard'],
                     ['label' => 'Profil Katalog', 'url' => route('catalog-admin.catalog.edit'), 'active' => 'catalog-admin.catalog.*'],
+                    ['label' => 'Ubah Password', 'url' => route('catalog-admin.password.edit'), 'active' => 'catalog-admin.password.*'],
                 ];
 
                 if ($user->catalog?->type === 'umkm') {

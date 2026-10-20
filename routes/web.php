@@ -3,6 +3,7 @@
 use App\Http\Controllers\CatalogAdmin\AuthController as CatalogAdminAuthController;
 use App\Http\Controllers\CatalogAdmin\CatalogController as CatalogAdminCatalogController;
 use App\Http\Controllers\CatalogAdmin\DashboardController as CatalogAdminDashboardController;
+use App\Http\Controllers\CatalogAdmin\PasswordController as CatalogAdminPasswordController;
 use App\Http\Controllers\CatalogAdmin\ProductController as CatalogAdminProductController;
 use App\Http\Controllers\CatalogAdmin\ActivityController as CatalogAdminActivityController;
 use App\Http\Controllers\CatalogPhotoController;
@@ -101,6 +102,10 @@ Route::prefix('catalog-admin')->name('catalog-admin.')->group(function () {
 
     Route::middleware(['auth', CatalogAdminMiddleware::class])->group(function () {
         Route::get('/dashboard', [CatalogAdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/password', [CatalogAdminPasswordController::class, 'edit'])->name('password.edit');
+        Route::put('/password', [CatalogAdminPasswordController::class, 'update'])
+            ->middleware('throttle:5,1')
+            ->name('password.update');
 
         Route::get('/catalog', [CatalogAdminCatalogController::class, 'edit'])->name('catalog.edit');
         Route::put('/catalog', [CatalogAdminCatalogController::class, 'update'])->name('catalog.update');
