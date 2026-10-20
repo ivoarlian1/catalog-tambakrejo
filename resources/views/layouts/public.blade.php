@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Katalog Fasum Kelurahan Tambakrejo')</title>
+    <title>@yield('title', 'Katalog Kelurahan Tambakrejo')</title>
     <meta name="description" content="@yield('meta_description', 'Direktori digital usaha, layanan, dan fasilitas di Kelurahan Tambakrejo.')">
     <link rel="canonical" href="@yield('canonical', url()->current())">
     <meta property="og:title" content="@yield('og_title', 'E-Catalog Kelurahan Tambakrejo')">
@@ -15,7 +15,7 @@
 </head>
 <body class="min-h-screen bg-cream font-sans text-navy antialiased">
     <a href="#konten" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2">Lewati ke konten</a>
-    <header class="sticky top-0 z-50 border-b border-sky bg-white">
+    <header class="sticky top-0 z-50 border-b border-white/70 bg-white/80 shadow-sm backdrop-blur-xl">
         <div class="mx-auto max-w-7xl px-4 py-3 md:flex md:items-center md:justify-between md:gap-6">
             <div class="flex items-center justify-between gap-4">
                 <a href="{{ route('home') }}" class="inline-flex min-h-11 items-center gap-3 font-semibold text-navy">
@@ -44,7 +44,7 @@
                             </form>
                         </li>
                     @else
-                        <li><a class="inline-flex min-h-11 items-center justify-center rounded-md border border-sea px-4 font-semibold text-sea hover:bg-sky" href="{{ route('catalog-admin.login') }}">Login Catalog Admin</a></li>
+                        <li><a class="inline-flex min-h-11 items-center justify-center rounded-md border border-sea px-4 font-semibold text-sea hover:bg-sky" href="{{ route('catalog-admin.login') }}">Login</a></li>
                     @endif
                 </ul>
             </nav>
@@ -53,7 +53,13 @@
     <main id="konten">
         @yield('content')
     </main>
-    <footer class="mt-16 border-t border-sky bg-white">
+    <dialog data-image-viewer aria-label="Pratinjau gambar" class="m-auto max-h-[90dvh] max-w-[min(92vw,72rem)] overflow-visible rounded-3xl border border-white/40 bg-white/10 p-2 shadow-2xl backdrop:bg-navy/80 backdrop:backdrop-blur-sm">
+        <div class="relative">
+            <img data-image-viewer-image src="" alt="" class="max-h-[85dvh] max-w-full rounded-2xl object-contain">
+            <button type="button" data-image-viewer-close aria-label="Tutup pratinjau gambar" class="absolute right-3 top-3 inline-flex size-11 items-center justify-center rounded-full border border-white/50 bg-navy/70 text-2xl text-white shadow-lg backdrop-blur-md transition hover:rotate-90 hover:bg-navy focus-visible:outline-white">×</button>
+        </div>
+    </dialog>
+    <footer class="mt-16 border-t border-white/70 bg-white/70 backdrop-blur-xl">
         <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-sm text-sea sm:flex-row sm:items-center sm:justify-between">
             <p>E-Catalog Kelurahan Tambakrejo. Direktori informasi untuk masyarakat.</p>
             <p class="font-medium">© KKN GIAT 17 UNNES</p>

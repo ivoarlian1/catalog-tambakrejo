@@ -55,7 +55,37 @@ function setupPasswordToggles() {
     });
 }
 
+function setupImageViewer() {
+    const dialog = document.querySelector('[data-image-viewer]');
+    const image = dialog?.querySelector('[data-image-viewer-image]');
+    const closeButton = dialog?.querySelector('[data-image-viewer-close]');
+
+    if (!(dialog instanceof HTMLDialogElement) || !(image instanceof HTMLImageElement) || !(closeButton instanceof HTMLButtonElement)) {
+        return;
+    }
+
+    document.addEventListener('click', (event) => {
+        const trigger = event.target instanceof Element ? event.target.closest('[data-image-preview]') : null;
+
+        if (!(trigger instanceof HTMLButtonElement)) {
+            return;
+        }
+
+        image.src = trigger.dataset.imageSrc ?? '';
+        image.alt = trigger.dataset.imageAlt ?? '';
+        dialog.showModal();
+    });
+
+    closeButton.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) {
+            dialog.close();
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setupMobileNav();
     setupPasswordToggles();
+    setupImageViewer();
 });

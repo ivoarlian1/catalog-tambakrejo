@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Catalog;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -116,6 +117,24 @@ class PublicCatalogTest extends TestCase
             ->assertSee("javascript:alert('xss')")
             ->assertDontSee('href="javascript:alert', false)
             ->assertSee('QR Code katalog');
+    }
+
+    public function test_umkm_products_render_as_image_preview_cards_with_price_and_description(): void
+    {
+        $catalog = Catalog::factory()->umkm()->published()->create();
+        $product = Product::factory()->for($catalog)->create([
+            'name' => 'Keripik Pisang Tambakrejo',
+            'description' => 'Keripik pisang renyah buatan warga.',
+            'price' => 12500,
+        ]);
+
+        $this->get(route('katalog.show', ['type' => 'umkm', 'slug' => $catalog->slug]))
+            ->assertSee($product->name)
+            ->assertSee('Rp 12.500')
+            ->assertSee($product->description)
+            ->assertSee('data-image-preview', false)
+            ->assertSee('data-image-src="'.$product->photo_url.'"', false)
+            ->assertSee('data-image-alt="Foto '.$product->name.'"', false);
     }
 
     public function test_qr_download_is_a_valid_jpeg_for_the_catalog_detail_route(): void

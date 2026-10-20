@@ -50,7 +50,13 @@ class AdminScreensTest extends TestCase
 
         $this->actingAs($admin);
 
-        $this->get(route('catalog-admin.dashboard'))->assertOk();
+        $this->get(route('catalog-admin.dashboard'))
+            ->assertOk()
+            ->assertSee('Ringkasan statistik')
+            ->assertSee('grid content-start gap-3', false)
+            ->assertSee('Jumlah produk')
+            ->assertSee('Produk tersedia')
+            ->assertSee('Berita & kegiatan', false);
         $this->get(route('catalog-admin.catalog.edit'))->assertOk();
         $this->get(route('catalog-admin.products.index'))->assertOk();
         $this->get(route('catalog-admin.products.create'))->assertOk();

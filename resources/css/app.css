@@ -20,8 +20,42 @@
         scroll-behavior: smooth;
     }
 
+    body {
+        background-image:
+            radial-gradient(ellipse at 8% 15%, rgb(58 155 155 / 9%), transparent 32rem),
+            radial-gradient(ellipse at 92% 45%, rgb(26 107 138 / 7%), transparent 36rem);
+        background-attachment: fixed;
+    }
+
     :focus-visible {
         outline: 2px solid var(--color-sea);
         outline-offset: 3px;
+    }
+}
+
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.motion-enter {
+    animation: rise-in 700ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
