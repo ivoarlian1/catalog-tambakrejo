@@ -34,21 +34,33 @@ class AuthController extends Controller
             return redirect()->route('catalog-admin.dashboard');
         }
 
+        $identifierRules = ['required', 'string'];
+        if (str_contains((string) $request->input('email'), '@')) {
+            $identifierRules[] = 'email';
+        }
+
         $credentials = $request->validate(
             [
-                'email' => ['required', 'string', 'email'],
+                'email' => $identifierRules,
                 'password' => ['required', 'string'],
             ],
             [
-                'email.required' => 'Email atau user ID wajib diisi.',
+                'email.required' => 'Email atau username wajib diisi.',
                 'email.email' => 'Format email tidak valid.',
                 'password.required' => 'Password wajib diisi.',
             ],
         );
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        $identifier = $credentials['email'];
+        $identityField = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $loginCredentials = [
+            $identityField => $identifier,
+            'password' => $credentials['password'],
+        ];
+
+        if (! Auth::attempt($loginCredentials, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'Email atau password yang Anda masukkan salah.',
+                'email' => 'Email, username, atau password yang Anda masukkan salah.',
             ]);
         }
 
@@ -58,7 +70,7 @@ class AuthController extends Controller
             Auth::logout();
 
             throw ValidationException::withMessages([
-                'email' => 'Email atau password yang Anda masukkan salah.',
+                'email' => 'Email, username, atau password yang Anda masukkan salah.',
             ]);
         }
 

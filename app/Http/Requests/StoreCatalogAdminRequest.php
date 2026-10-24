@@ -23,7 +23,8 @@ class StoreCatalogAdminRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['nullable', 'required_without:username', 'string', 'email', 'max:255', 'unique:users,email'],
+            'username' => ['nullable', 'required_without:email', 'string', 'max:50', 'alpha_dash', 'unique:users,username'],
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
             'catalog_id' => ['required', 'integer', 'exists:catalogs,id', 'unique:users,catalog_id'],
             'is_active' => ['sometimes', 'boolean'],
@@ -37,6 +38,10 @@ class StoreCatalogAdminRequest extends FormRequest
     {
         return [
             'email.unique' => 'Email sudah digunakan oleh pengguna lain.',
+            'email.required_without' => 'Email atau username wajib diisi.',
+            'username.required_without' => 'Email atau username wajib diisi.',
+            'username.unique' => 'Username sudah digunakan oleh pengguna lain.',
+            'username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, tanda hubung, dan garis bawah.',
             'catalog_id.exists' => 'Katalog yang dipilih tidak valid.',
             'catalog_id.required' => 'Katalog wajib dipilih.',
             'catalog_id.unique' => 'Katalog ini sudah memiliki Catalog Admin.',

@@ -26,7 +26,8 @@ class CatalogAdminController extends Controller
             $search = $request->string('search')->toString();
             $query->where(function ($q) use ($search): void {
                 $q->where('name', 'like', '%'.$search.'%')
-                    ->orWhere('email', 'like', '%'.$search.'%');
+                    ->orWhere('email', 'like', '%'.$search.'%')
+                    ->orWhere('username', 'like', '%'.$search.'%');
             });
         }
 
@@ -57,6 +58,7 @@ class CatalogAdminController extends Controller
         User::query()->create([
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
+            'username' => $request->validated('username'),
             'password' => $request->validated('password'),
             'role' => 'catalog_admin',
             'catalog_id' => $request->integer('catalog_id'),
@@ -92,6 +94,7 @@ class CatalogAdminController extends Controller
         $data = [
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
+            'username' => $request->validated('username'),
             'catalog_id' => $request->integer('catalog_id'),
             'is_active' => $request->boolean('is_active', $admin->is_active),
         ];

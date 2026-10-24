@@ -48,6 +48,22 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_active_catalog_admin_can_login_with_username(): void
+    {
+        $catalog = Catalog::factory()->create();
+        $admin = User::factory()->catalogAdmin($catalog)->create([
+            'username' => 'catalog_admin',
+            'password' => 'StrongPass123',
+        ]);
+
+        $this->post(route('catalog-admin.login.post'), [
+            'email' => 'catalog_admin',
+            'password' => 'StrongPass123',
+        ])->assertRedirect(route('catalog-admin.dashboard'));
+
+        $this->assertAuthenticatedAs($admin);
+    }
+
     public function test_catalog_admin_cannot_login_to_superadmin_portal(): void
     {
         $catalog = Catalog::factory()->create();
@@ -112,13 +128,13 @@ class AuthenticationTest extends TestCase
             ->post(route('catalog-admin.login.post'), [])
             ->assertRedirect(route('catalog-admin.login'))
             ->assertSessionHasErrors([
-                'email' => 'Email atau user ID wajib diisi.',
+                'email' => 'Email atau username wajib diisi.',
                 'password' => 'Password wajib diisi.',
             ]);
 
         $this->from(route('catalog-admin.login'))
             ->post(route('catalog-admin.login.post'), [
-                'email' => 'not-an-email',
+                'email' => 'not-an-email@',
                 'password' => 'wrong',
             ])
             ->assertRedirect(route('catalog-admin.login'))
@@ -130,7 +146,7 @@ class AuthenticationTest extends TestCase
                 'password' => 'wrong',
             ])
             ->assertRedirect(route('catalog-admin.login'))
-            ->assertSessionHasErrors(['email' => 'Email atau password yang Anda masukkan salah.']);
+            ->assertSessionHasErrors(['email' => 'Email, username, atau password yang Anda masukkan salah.']);
 
         $this->from(route('catalog-admin.login'))
             ->post(route('catalog-admin.login.post'), [
@@ -138,7 +154,7 @@ class AuthenticationTest extends TestCase
                 'password' => 'wrong',
             ])
             ->assertRedirect(route('catalog-admin.login'))
-            ->assertSessionHasErrors(['email' => 'Email atau password yang Anda masukkan salah.']);
+            ->assertSessionHasErrors(['email' => 'Email, username, atau password yang Anda masukkan salah.']);
     }
 
     public function test_both_login_forms_include_password_toggle_without_submit_behavior(): void
