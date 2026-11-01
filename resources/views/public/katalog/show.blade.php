@@ -105,7 +105,7 @@
                     <h2 id="activities-heading" class="text-xl font-semibold">Berita & Kegiatan</h2>
                     <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($catalog->activities as $activity)
-                            <article class="overflow-hidden rounded-2xl border border-white/80 bg-white/70 shadow-lg shadow-navy/5 backdrop-blur-xl"><img src="{{ $activity->photo_url }}" alt="Foto {{ $activity->title }}" class="aspect-video w-full object-cover" width="640" height="360" loading="lazy"><div class="p-4"><h3 class="font-semibold">{{ $activity->title }}</h3><p class="mt-1 text-sm text-sea">{{ $activity->event_date?->translatedFormat('d F Y') ?: 'Tanggal belum ditentukan' }}</p>@if ($activity->description)<p class="mt-3 text-sm leading-6">{{ $activity->description }}</p>@endif</div></article>
+                            <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-white/80 bg-white/70 shadow-lg shadow-navy/5 backdrop-blur-xl"><img src="{{ $activity->photo_url }}" alt="Foto {{ $activity->title }}" class="aspect-video w-full shrink-0 object-cover" width="640" height="360" loading="lazy"><div class="flex flex-1 flex-col p-4"><h3 class="line-clamp-2 min-h-12 font-semibold">{{ $activity->title }}</h3><p class="mt-1 min-h-5 text-sm text-sea">{{ $activity->event_date?->translatedFormat('d F Y') ?: 'Tanggal belum ditentukan' }}</p><p class="mt-3 line-clamp-3 min-h-[4.5rem] text-sm leading-6">{{ $activity->description ?: 'Deskripsi kegiatan belum tersedia.' }}</p></div></article>
                         @endforeach
                     </div>
                 </section>
@@ -121,21 +121,21 @@
                     </div>
                     <div class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         @forelse ($catalog->products as $product)
-                            <article class="group overflow-hidden rounded-3xl border border-white/80 bg-white/75 shadow-lg shadow-navy/5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-sea/10">
+                            <article class="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/80 bg-white/75 shadow-lg shadow-navy/5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-sea/10">
                                 <button type="button" data-image-preview data-image-src="{{ $product->photo_url }}" data-image-alt="Foto {{ $product->name }}" aria-label="Lihat foto produk {{ $product->name }}" class="relative block w-full overflow-hidden bg-sky text-left">
                                     <img src="{{ $product->photo_url }}" alt="Foto {{ $product->name }}" class="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" width="800" height="600" loading="lazy">
                                     <span class="absolute bottom-3 right-3 rounded-full border border-white/50 bg-navy/60 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur-md transition group-hover:opacity-100 group-focus-visible:opacity-100">Lihat foto</span>
                                 </button>
-                                <div class="flex h-full flex-col gap-3 p-5">
+                                <div class="flex flex-1 flex-col gap-3 p-5">
                                     <div class="flex items-start justify-between gap-3">
-                                        <h3 class="text-lg font-bold leading-snug">{{ $product->name }}</h3>
-                                        <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold {{ $product->is_available ? 'bg-teal/10 text-sea' : 'bg-sand text-sea' }}">{{ $product->availability_label }}</span>
+                                        <h3 class="line-clamp-2 min-h-14 text-lg font-bold leading-snug">{{ $product->name }}</h3>
+                                        <span class="shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold {{ $product->is_available ? 'bg-teal/10 text-sea' : 'bg-sand text-sea' }}">{{ $product->availability_label }}</span>
                                     </div>
-                                    <p class="text-lg font-bold text-sea">{{ $product->formatted_price }}</p>
+                                    <p class="min-h-7 text-lg font-bold text-sea">{{ $product->formatted_price }}</p>
                                     @if ($product->description)
-                                        <p class="text-sm leading-6 text-sea">{{ $product->description }}</p>
+                                        <p class="line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-sea">{{ $product->description }}</p>
                                     @else
-                                        <p class="text-sm italic text-sea/70">Deskripsi produk belum tersedia.</p>
+                                        <p class="line-clamp-3 min-h-[4.5rem] text-sm italic leading-6 text-sea/70">Deskripsi produk belum tersedia.</p>
                                     @endif
                                 </div>
                             </article>

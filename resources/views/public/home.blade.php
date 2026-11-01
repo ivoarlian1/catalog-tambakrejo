@@ -32,10 +32,10 @@
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         @foreach ($categories as $category)
             @php($type = $category->slug)
-            <a href="{{ route('katalog.bytype', $type) }}" class="group rounded-2xl border border-white/80 bg-white/70 p-5 shadow-lg shadow-navy/5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-teal/40 hover:shadow-xl hover:shadow-sea/10">
+            <a href="{{ route('katalog.bytype', $type) }}" class="group flex h-full flex-col rounded-2xl border border-white/80 bg-white/70 p-5 shadow-lg shadow-navy/5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-teal/40 hover:shadow-xl hover:shadow-sea/10">
                 <span class="inline-flex size-11 items-center justify-center rounded-xl bg-sky text-xl text-sea transition duration-300 group-hover:rotate-6 group-hover:scale-110" aria-hidden="true">✦</span>
-                <p class="mt-4 text-lg font-semibold">{{ $category->name }}</p>
-                <p class="mt-1 text-sm text-sea">{{ $counts[$type] }} katalog <span class="float-right transition-transform group-hover:translate-x-1" aria-hidden="true">→</span></p>
+                <p class="mt-4 line-clamp-2 min-h-14 text-lg font-semibold">{{ $category->name }}</p>
+                <p class="mt-auto flex items-center justify-between gap-2 pt-2 text-sm text-sea"><span>{{ $counts[$type] }} katalog</span><span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span></p>
             </a>
         @endforeach
     </div>
