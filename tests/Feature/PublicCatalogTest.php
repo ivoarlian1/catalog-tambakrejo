@@ -119,6 +119,47 @@ class PublicCatalogTest extends TestCase
             ->assertSee('QR Code katalog');
     }
 
+    public function test_public_detail_renders_catalog_photos_as_a_horizontal_slideshow(): void
+    {
+        $catalog = Catalog::factory()->published()->create([
+            'type' => 'umkm',
+            'slug' => 'warung-foto-katalog',
+        ]);
+        $catalog->photos()->create([
+            'file_path' => 'catalogs/cover.jpg',
+            'type' => 'cover',
+            'sort_order' => 0,
+        ]);
+        $galleryPhoto = $catalog->photos()->create([
+            'file_path' => 'catalogs/gallery.jpg',
+            'type' => 'gallery',
+            'sort_order' => 1,
+        ]);
+
+        $response = $this->get(route('katalog.show', ['type' => $catalog->type, 'slug' => $catalog->slug]));
+
+        $response
+            ->assertSee('data-gallery-track', false)
+            ->assertSee('data-gallery-slide', false)
+            ->assertDontSee('data-gallery-thumb', false)
+            ->assertSee('data-gallery-dot', false)
+            ->assertSee('data-gallery-next', false)
+            ->assertSee('data-gallery-open', false)
+            ->assertSee('data-gallery-viewer', false)
+            ->assertSee('data-gallery-photo', false)
+            ->assertDontSee('data-gallery-viewer-image', false)
+            ->assertSee('Foto tambahan '.$catalog->name, false)
+            ->assertSee($galleryPhoto->url, false);
+
+        $this->assertSame(2, substr_count($response->getContent(), 'data-gallery-dot'));
+        $response->assertSeeInOrder([
+            '<section data-gallery',
+            'data-gallery-open',
+            '<dialog data-gallery-viewer',
+            '</section>',
+        ], false);
+    }
+
     public function test_umkm_products_render_as_image_preview_cards_with_price_and_description(): void
     {
         $catalog = Catalog::factory()->umkm()->published()->create();

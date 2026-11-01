@@ -84,8 +84,97 @@ function setupImageViewer() {
     });
 }
 
+function setupCatalogGalleries() {
+    document.querySelectorAll('[data-gallery]').forEach((gallery) => {
+        const track = gallery.querySelector('[data-gallery-track]');
+        const slides = [...gallery.querySelectorAll('[data-gallery-slide]')];
+        const dots = [...gallery.querySelectorAll('[data-gallery-dot]')];
+        const previousButton = gallery.querySelector('[data-gallery-previous]');
+        const nextButton = gallery.querySelector('[data-gallery-next]');
+        const counter = gallery.querySelector('[data-gallery-counter]');
+        const openButton = gallery.querySelector('[data-gallery-open]');
+        const viewer = gallery.querySelector('[data-gallery-viewer]');
+        const viewerClose = viewer?.querySelector('[data-gallery-close]');
+
+        if (!(track instanceof HTMLElement) || slides.length < 2) {
+            return;
+        }
+
+        let currentIndex = 0;
+
+        function updateCurrentSlide() {
+            if (track.clientWidth === 0) {
+                return;
+            }
+
+            currentIndex = Math.min(
+                slides.length - 1,
+                Math.max(0, Math.round(track.scrollLeft / track.clientWidth)),
+            );
+
+            updateControls();
+        }
+
+        function updateControls() {
+            dots.forEach((dot, index) => {
+                const isCurrent = index === currentIndex;
+                dot.setAttribute('aria-pressed', String(isCurrent));
+                dot.classList.toggle('scale-110', isCurrent);
+                dot.classList.toggle('border-sea', isCurrent);
+                dot.classList.toggle('bg-sea', isCurrent);
+                dot.classList.toggle('ring-2', isCurrent);
+                dot.classList.toggle('ring-sea/30', isCurrent);
+                dot.classList.toggle('border-white', !isCurrent);
+                dot.classList.toggle('bg-slate-400', !isCurrent);
+            });
+
+            if (counter) {
+                counter.textContent = `${currentIndex + 1} / ${slides.length}`;
+            }
+        }
+
+        function goToSlide(index) {
+            if (index < 0 || index >= slides.length || track.clientWidth === 0) {
+                return;
+            }
+
+            currentIndex = index;
+            track.scrollLeft = currentIndex * track.clientWidth;
+            updateControls();
+        }
+
+        previousButton?.addEventListener('click', () => goToSlide(currentIndex - 1));
+        nextButton?.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => goToSlide(index));
+        });
+
+        if (openButton instanceof HTMLButtonElement && viewer instanceof HTMLDialogElement) {
+            openButton.addEventListener('click', () => {
+                viewer.showModal();
+            });
+
+            viewer.addEventListener('click', (event) => {
+                if (event.target === viewer) {
+                    viewer.close();
+                }
+            });
+        }
+
+        if (viewer instanceof HTMLDialogElement && viewerClose instanceof HTMLButtonElement) {
+            viewerClose.addEventListener('click', () => viewer.close());
+        }
+
+        track.addEventListener('scroll', updateCurrentSlide, { passive: true });
+        window.addEventListener('resize', updateCurrentSlide);
+        updateCurrentSlide();
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setupMobileNav();
     setupPasswordToggles();
     setupImageViewer();
+    setupCatalogGalleries();
 });
