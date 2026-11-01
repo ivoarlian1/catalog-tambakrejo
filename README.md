@@ -92,6 +92,8 @@ Foto divalidasi sebagai JPEG, PNG, atau WebP dengan batas 2 MB per file dan disi
    - `SUPABASE_STORAGE_BUCKET=catalog-images`
 4. Redeploy Vercel. Upload foto baru melalui halaman admin; URL gambar akan disajikan dari bucket Supabase.
 
+Pada deployment Vercel, jangan gunakan `SESSION_DRIVER=file`: filesystem `/tmp` bersifat sementara dan tidak dibagi antar-invocation. Jika driver `file` terdeteksi pada Vercel, aplikasi otomatis memakai driver `cookie` agar sesi admin tetap tersedia setelah request hapus foto berpindah ke invocation lain. Driver bersama seperti `database` atau `redis` tetap dapat digunakan jika backend-nya persisten.
+
 Foto lama yang tersimpan di filesystem sementara Vercel tidak dapat dipulihkan dari database saja. Unggah ulang file aslinya setelah konfigurasi aktif. Gunakan gambar fallback saat path database tidak menunjuk ke file yang tersedia.
 
 Navbar memakai simbol placeholder mandiri di `public/images/logo/ecatalog-mark.svg`; simbol tersebut bukan logo resmi Kelurahan dan dapat diganti dengan file logo resmi kelak. Footer publik menampilkan `© KKN GIAT 17 UNNES`.

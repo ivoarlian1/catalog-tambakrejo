@@ -82,6 +82,50 @@ class CatalogPhotoManagementTest extends TestCase
         Storage::disk('public')->assertExists($otherPhoto->file_path);
     }
 
+    public function test_superadmin_remains_authenticated_after_deleting_a_catalog_photo(): void
+    {
+        Storage::fake('public');
+        config(['catalog.media_disk' => 'public']);
+        $catalog = Catalog::factory()->create();
+        $admin = User::factory()->superadmin()->create();
+        $photo = $catalog->photos()->create([
+            'file_path' => 'catalogs/'.$catalog->id.'/photo.png',
+            'type' => 'gallery',
+        ]);
+        Storage::disk('public')->put($photo->file_path, 'image bytes');
+
+        $this->actingAs($admin)
+            ->delete(route('superadmin.catalogs.photos.destroy', [$catalog, $photo]))
+            ->assertRedirect(route('superadmin.catalogs.edit', $catalog));
+
+        $this->assertDatabaseMissing('catalog_photos', ['id' => $photo->id]);
+        Storage::disk('public')->assertMissing($photo->file_path);
+        $this->get(route('superadmin.catalogs.edit', $catalog))->assertOk();
+        $this->assertAuthenticatedAs($admin);
+    }
+
+    public function test_catalog_admin_remains_authenticated_after_deleting_a_catalog_photo(): void
+    {
+        Storage::fake('public');
+        config(['catalog.media_disk' => 'public']);
+        $catalog = Catalog::factory()->create();
+        $admin = User::factory()->catalogAdmin($catalog)->create();
+        $photo = $catalog->photos()->create([
+            'file_path' => 'catalogs/'.$catalog->id.'/photo.png',
+            'type' => 'gallery',
+        ]);
+        Storage::disk('public')->put($photo->file_path, 'image bytes');
+
+        $this->actingAs($admin)
+            ->delete(route('catalog-admin.catalog.photos.destroy', $photo))
+            ->assertRedirect(route('catalog-admin.catalog.edit'));
+
+        $this->assertDatabaseMissing('catalog_photos', ['id' => $photo->id]);
+        Storage::disk('public')->assertMissing($photo->file_path);
+        $this->get(route('catalog-admin.catalog.edit'))->assertOk();
+        $this->assertAuthenticatedAs($admin);
+    }
+
     public function test_upload_rejects_more_than_one_cover_file(): void
     {
         Storage::fake('public');
