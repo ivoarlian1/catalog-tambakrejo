@@ -1,6 +1,9 @@
 @php
     $editing = isset($catalog);
     $adminProfile = !isset($typeLabels);
+    $coordinateFormat = old('coordinate_format', $editing ? ($catalog->coordinate_format ?? 'utm_49s') : 'utm_49s');
+    $coordinateX = old('coordinate_x', $editing ? ($catalog->coordinate_x ?? $catalog->longitude ?? '') : '');
+    $coordinateY = old('coordinate_y', $editing ? ($catalog->coordinate_y ?? $catalog->latitude ?? '') : '');
     $action = $adminProfile ? route('catalog-admin.catalog.update') : ($editing ? route('superadmin.catalogs.update', $catalog) : route('superadmin.catalogs.store'));
 @endphp
 <form method="POST" action="{{ $action }}" enctype="multipart/form-data" class="space-y-5" data-catalog-form data-subtypes="{{ json_encode($subTypeOptions, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG) }}">
@@ -22,8 +25,19 @@
         <div data-responsible-field class="{{ old('type', $catalog->type ?? '') !== '' && old('type', $catalog->type ?? '') !== 'umkm' ? '' : 'hidden' }}"><label for="responsible_person" class="mb-1 block font-medium">Penanggung jawab</label><input id="responsible_person" name="responsible_person" value="{{ old('responsible_person', $catalog->responsible_person ?? '') }}" maxlength="255" class="min-h-11 w-full rounded-md border border-sky px-3"><x-input-error field="responsible_person" /></div>
         <div class="md:col-span-2"><label for="description" class="mb-1 block font-medium">Deskripsi</label><textarea id="description" name="description" rows="4" maxlength="5000" class="w-full rounded-md border border-sky px-3 py-2">{{ old('description', $catalog->description ?? '') }}</textarea><x-input-error field="description" /></div>
         <div class="md:col-span-2"><label for="address" class="mb-1 block font-medium">Alamat</label><textarea id="address" name="address" rows="2" required maxlength="500" class="w-full rounded-md border border-sky px-3 py-2">{{ old('address', $catalog->address ?? '') }}</textarea><x-input-error field="address" /></div>
-        <div><label for="latitude" class="mb-1 block font-medium">Latitude</label><input id="latitude" name="latitude" type="number" step="any" min="-90" max="90" value="{{ old('latitude', $catalog->latitude ?? '') }}" class="min-h-11 w-full rounded-md border border-sky px-3"><x-input-error field="latitude" /></div>
-        <div><label for="longitude" class="mb-1 block font-medium">Longitude</label><input id="longitude" name="longitude" type="number" step="any" min="-180" max="180" value="{{ old('longitude', $catalog->longitude ?? '') }}" class="min-h-11 w-full rounded-md border border-sky px-3"><x-input-error field="longitude" /></div>
+        <div class="md:col-span-2 rounded-md border border-sky p-4" data-coordinate-form>
+            <label for="coordinate_format" class="mb-1 block font-medium">Format koordinat</label>
+            <select id="coordinate_format" name="coordinate_format" required data-coordinate-format class="min-h-11 w-full rounded-md border border-sky px-3">
+                <option value="utm_49s" @selected($coordinateFormat === 'utm_49s')>XY — UTM zona 49S / WGS84 (meter)</option>
+                <option value="latitude_longitude" @selected($coordinateFormat === 'latitude_longitude')>Latitude / Longitude (derajat)</option>
+            </select>
+            <p class="mt-1 text-sm text-sea" data-coordinate-help>{{ $coordinateFormat === 'utm_49s' ? 'Masukkan X sebagai easting dan Y sebagai northing dalam meter.' : 'Masukkan X sebagai longitude dan Y sebagai latitude dalam derajat.' }}</p>
+            <div class="mt-3 grid gap-5 md:grid-cols-2">
+                <div><label for="coordinate_x" class="mb-1 block font-medium"><span data-coordinate-x-label>{{ $coordinateFormat === 'utm_49s' ? 'X — Easting (meter)' : 'X — Longitude (derajat)' }}</span></label><input id="coordinate_x" name="coordinate_x" type="number" step="any" data-coordinate-x value="{{ $coordinateX }}" class="min-h-11 w-full rounded-md border border-sky px-3"><x-input-error field="coordinate_x" /></div>
+                <div><label for="coordinate_y" class="mb-1 block font-medium"><span data-coordinate-y-label>{{ $coordinateFormat === 'utm_49s' ? 'Y — Northing (meter)' : 'Y — Latitude (derajat)' }}</span></label><input id="coordinate_y" name="coordinate_y" type="number" step="any" data-coordinate-y value="{{ $coordinateY }}" class="min-h-11 w-full rounded-md border border-sky px-3"><x-input-error field="coordinate_y" /></div>
+            </div>
+            <x-input-error field="coordinate_format" />
+        </div>
         <div><label for="whatsapp" class="mb-1 block font-medium">WhatsApp</label><input id="whatsapp" name="whatsapp" value="{{ old('whatsapp', $catalog->whatsapp ?? '') }}" maxlength="20" class="min-h-11 w-full rounded-md border border-sky px-3"><x-input-error field="whatsapp" /></div>
         <div><label for="phone" class="mb-1 block font-medium">Telepon</label><input id="phone" name="phone" value="{{ old('phone', $catalog->phone ?? '') }}" maxlength="20" class="min-h-11 w-full rounded-md border border-sky px-3"><x-input-error field="phone" /></div>
         <div><label for="email" class="mb-1 block font-medium">Email</label><input id="email" name="email" type="email" value="{{ old('email', $catalog->email ?? '') }}" maxlength="255" class="min-h-11 w-full rounded-md border border-sky px-3"><x-input-error field="email" /></div>

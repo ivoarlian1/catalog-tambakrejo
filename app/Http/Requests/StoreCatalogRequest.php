@@ -15,6 +15,8 @@ class StoreCatalogRequest extends CatalogFormRequest
 
     protected function prepareForValidation(): void
     {
+        parent::prepareForValidation();
+
         if (! $this->filled('slug') && $this->filled('name')) {
             $this->merge([
                 'slug' => Catalog::uniqueSlugFromName($this->string('name')->toString()),

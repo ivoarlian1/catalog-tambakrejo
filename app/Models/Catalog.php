@@ -4,18 +4,19 @@ namespace App\Models;
 
 use App\Support\ImageUploader;
 use App\Support\WhatsAppNumber;
+use Database\Factories\CatalogFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class Catalog extends Model
 {
-    /** @use HasFactory<\Database\Factories\CatalogFactory> */
+    /** @use HasFactory<CatalogFactory> */
     use HasFactory;
 
     /**
@@ -31,6 +32,9 @@ class Catalog extends Model
         'owner_name',
         'responsible_person',
         'address',
+        'coordinate_format',
+        'coordinate_x',
+        'coordinate_y',
         'latitude',
         'longitude',
         'email',
@@ -119,6 +123,48 @@ class Catalog extends Model
             'type' => $this->type,
             'slug' => $this->slug,
         ]);
+    }
+
+    public function getCoordinateFormatLabelAttribute(): string
+    {
+        return $this->coordinate_format === 'utm_49s'
+            ? 'X, Y (UTM zona 49S / WGS84)'
+            : 'Latitude, Longitude';
+    }
+
+    public function getCoordinateDisplayValueAttribute(): ?string
+    {
+        if ($this->coordinate_format === 'utm_49s') {
+            return $this->coordinate_x_value !== null && $this->coordinate_y_value !== null
+                ? $this->coordinate_x_value.', '.$this->coordinate_y_value
+                : null;
+        }
+
+        return $this->latitude !== null && $this->longitude !== null
+            ? $this->latitude.', '.$this->longitude
+            : null;
+    }
+
+    public function getCoordinateXValueAttribute(): ?string
+    {
+        $value = $this->coordinate_x ?? $this->longitude;
+
+        return $value === null
+            ? null
+            : ($this->coordinate_format === 'utm_49s'
+                ? number_format((float) $value, 7, '.', '')
+                : (string) $value);
+    }
+
+    public function getCoordinateYValueAttribute(): ?string
+    {
+        $value = $this->coordinate_y ?? $this->latitude;
+
+        return $value === null
+            ? null
+            : ($this->coordinate_format === 'utm_49s'
+                ? number_format((float) $value, 7, '.', '')
+                : (string) $value);
     }
 
     public function getWhatsappUrlAttribute(): ?string

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Catalog;
 use App\Models\Category;
+use App\Support\CoordinateConverter;
 use App\Support\WhatsAppNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -24,6 +25,27 @@ abstract class CatalogFormRequest extends FormRequest
             'owner_name' => ['nullable', 'string', 'max:255'],
             'responsible_person' => ['nullable', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:500'],
+            'coordinate_format' => ['required', Rule::in(['latitude_longitude', 'utm_49s'])],
+            'coordinate_x' => [
+                'nullable',
+                'numeric',
+                'required_with:coordinate_y',
+                Rule::when(
+                    $this->input('coordinate_format') === 'latitude_longitude',
+                    ['between:-180,180'],
+                    ['between:100000,900000'],
+                ),
+            ],
+            'coordinate_y' => [
+                'nullable',
+                'numeric',
+                'required_with:coordinate_x',
+                Rule::when(
+                    $this->input('coordinate_format') === 'latitude_longitude',
+                    ['between:-90,90'],
+                    ['between:0,10000000'],
+                ),
+            ],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -91,5 +113,29 @@ abstract class CatalogFormRequest extends FormRequest
         if ($this->filled('sub_type')) {
             $this->merge(['sub_type' => trim($this->string('sub_type')->toString())]);
         }
+
+        $usesLegacyCoordinates = ! $this->exists('coordinate_x')
+            && ! $this->exists('coordinate_y')
+            && ($this->exists('latitude') || $this->exists('longitude'));
+        $format = $this->input('coordinate_format', $usesLegacyCoordinates ? 'latitude_longitude' : 'utm_49s');
+        $x = $this->input('coordinate_x', $usesLegacyCoordinates ? $this->input('longitude') : null);
+        $y = $this->input('coordinate_y', $usesLegacyCoordinates ? $this->input('latitude') : null);
+        $coordinates = ['latitude' => null, 'longitude' => null];
+
+        if (is_numeric($x) && is_numeric($y)) {
+            if ($format === 'latitude_longitude') {
+                $coordinates = ['latitude' => (float) $y, 'longitude' => (float) $x];
+            } elseif ($format === 'utm_49s' && (float) $x >= 100000 && (float) $x <= 900000
+                && (float) $y >= 0 && (float) $y <= 10000000) {
+                $coordinates = CoordinateConverter::utm49SToLatitudeLongitude((float) $x, (float) $y);
+            }
+        }
+
+        $this->merge([
+            'coordinate_format' => $format,
+            'coordinate_x' => $x,
+            'coordinate_y' => $y,
+            ...$coordinates,
+        ]);
     }
 }

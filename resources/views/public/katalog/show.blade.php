@@ -85,8 +85,8 @@
             <dl class="mt-8 grid gap-4 border-t border-sky pt-6 sm:grid-cols-2">
                 <div><dt class="text-sm text-sea">{{ $catalog->contact_person_label }}</dt><dd class="mt-1 font-medium">{{ $catalog->contact_person ?: 'Belum dicantumkan' }}</dd></div>
                 <div><dt class="text-sm text-sea">Alamat</dt><dd class="mt-1">{{ $catalog->address }}</dd></div>
-                @if ($catalog->latitude !== null && $catalog->longitude !== null)
-                    <div><dt class="text-sm text-sea">Koordinat Lokasi</dt><dd class="mt-1 font-mono">{{ $catalog->latitude }}, {{ $catalog->longitude }}</dd></div>
+                @if ($catalog->coordinate_display_value !== null)
+                    <div><dt class="text-sm text-sea">Koordinat Lokasi — {{ $catalog->coordinate_format_label }}</dt><dd class="mt-1 font-mono">{{ $catalog->coordinate_display_value }}</dd></div>
                 @endif
                     @if ($catalog->other_contact)<div><dt class="text-sm text-sea">Kontak lainnya</dt><dd class="mt-1">{{ $catalog->other_contact }}</dd></div>@endif
             </dl>

@@ -360,10 +360,52 @@ function setupImageCompression() {
     }, true);
 }
 
+function setupCoordinateFormat() {
+    document.querySelectorAll('[data-coordinate-form]').forEach((container) => {
+        const format = container.querySelector('[data-coordinate-format]');
+        const xInput = container.querySelector('[data-coordinate-x]');
+        const yInput = container.querySelector('[data-coordinate-y]');
+        const xLabel = container.querySelector('[data-coordinate-x-label]');
+        const yLabel = container.querySelector('[data-coordinate-y-label]');
+        const help = container.querySelector('[data-coordinate-help]');
+
+        if (!(format instanceof HTMLSelectElement)
+            || !(xInput instanceof HTMLInputElement)
+            || !(yInput instanceof HTMLInputElement)
+            || !(xLabel instanceof HTMLElement)
+            || !(yLabel instanceof HTMLElement)
+            || !(help instanceof HTMLElement)) {
+            return;
+        }
+
+        function updateFields(clearValues = false) {
+            const usesUtm = format.value === 'utm_49s';
+            xLabel.textContent = usesUtm ? 'X — Easting (meter)' : 'X — Longitude (derajat)';
+            yLabel.textContent = usesUtm ? 'Y — Northing (meter)' : 'Y — Latitude (derajat)';
+            help.textContent = usesUtm
+                ? 'Masukkan X sebagai easting dan Y sebagai northing dalam meter (UTM zona 49S / WGS84).'
+                : 'Masukkan X sebagai longitude dan Y sebagai latitude dalam derajat.';
+            xInput.min = usesUtm ? '100000' : '-180';
+            xInput.max = usesUtm ? '900000' : '180';
+            yInput.min = usesUtm ? '0' : '-90';
+            yInput.max = usesUtm ? '10000000' : '90';
+
+            if (clearValues) {
+                xInput.value = '';
+                yInput.value = '';
+            }
+        }
+
+        format.addEventListener('change', () => updateFields(true));
+        updateFields();
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setupMobileNav();
     setupPasswordToggles();
     setupImageViewer();
     setupCatalogGalleries();
     setupImageCompression();
+    setupCoordinateFormat();
 });
