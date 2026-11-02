@@ -16,6 +16,7 @@ use App\Http\Controllers\Superadmin\CatalogController as SuperadminCatalogContro
 use App\Http\Controllers\Superadmin\ActivityController as SuperadminActivityController;
 use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardController;
 use App\Http\Controllers\Superadmin\ProductController as SuperadminProductController;
+use App\Http\Controllers\Superadmin\PasswordController as SuperadminPasswordController;
 use App\Http\Controllers\Superadmin\QrCodeController;
 use App\Http\Controllers\Superadmin\SuperadminUserController;
 use App\Http\Middleware\CatalogAdminMiddleware;
@@ -51,6 +52,10 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
 
     Route::middleware(['auth', SuperadminMiddleware::class])->group(function () {
         Route::get('/dashboard', [SuperadminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/password', [SuperadminPasswordController::class, 'edit'])->name('password.edit');
+        Route::put('/password', [SuperadminPasswordController::class, 'update'])
+            ->middleware('throttle:5,1')
+            ->name('password.update');
 
         Route::resource('categories', SuperadminCategoryController::class)->except(['show']);
 

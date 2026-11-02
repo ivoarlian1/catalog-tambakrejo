@@ -48,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
                     'logoutUrl' => route('superadmin.logout'),
                     'menu' => [
                         ['label' => 'Dashboard', 'url' => route('superadmin.dashboard'), 'active' => 'superadmin.dashboard'],
+                        ['label' => 'Ubah Password', 'url' => route('superadmin.password.edit'), 'active' => 'superadmin.password.*'],
                         ['label' => 'Kategori', 'url' => route('superadmin.categories.index'), 'active' => 'superadmin.categories.*'],
                         ['label' => 'Katalog', 'url' => route('superadmin.catalogs.index'), 'active' => 'superadmin.catalogs.*'],
                         ['label' => 'Catalog Admin', 'url' => route('superadmin.admins.index'), 'active' => 'superadmin.admins.*'],
