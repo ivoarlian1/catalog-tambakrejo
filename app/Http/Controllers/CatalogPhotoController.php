@@ -76,6 +76,9 @@ class CatalogPhotoController extends Controller
             'photos' => ['required', 'array', 'min:1', 'max:10'],
             'photos.*' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'extensions:jpeg,jpg,png,webp', 'max:2048'],
             'type' => ['required', Rule::in(['cover', 'location', 'gallery'])],
+        ], [
+            'photos.*.max' => 'Ukuran setiap foto tidak boleh lebih dari 2 MB. Foto besar dikompres otomatis sebelum dikirim.',
+            'photos.*.uploaded' => 'Foto gagal diunggah. Pilih foto yang ukurannya lebih kecil, lalu coba lagi.',
         ]);
 
         if ($data['type'] === 'cover' && count($data['photos']) > 1) {

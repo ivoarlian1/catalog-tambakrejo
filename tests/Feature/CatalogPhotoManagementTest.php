@@ -143,6 +143,22 @@ class CatalogPhotoManagementTest extends TestCase
         $this->assertDatabaseCount('catalog_photos', 0);
     }
 
+    public function test_upload_shows_a_readable_message_when_a_photo_exceeds_the_size_limit(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->superadmin()->create();
+        $catalog = Catalog::factory()->create();
+
+        $this->actingAs($admin)->post(route('superadmin.catalogs.photos.store', $catalog), [
+            'type' => 'gallery',
+            'photos' => [UploadedFile::fake()->image('large.jpg')->size(2049)],
+        ])->assertSessionHasErrors([
+            'photos.0' => 'Ukuran setiap foto tidak boleh lebih dari 2 MB. Foto besar dikompres otomatis sebelum dikirim.',
+        ]);
+
+        $this->assertDatabaseCount('catalog_photos', 0);
+    }
+
     public function test_upload_rejects_executable_files(): void
     {
         Storage::fake('public');
@@ -181,5 +197,22 @@ class CatalogPhotoManagementTest extends TestCase
         $this->get(route('katalog.show', ['type' => 'umkm', 'slug' => $catalog->slug]))
             ->assertSee($product->photo_url, false)
             ->assertSee('Kerajinan Bambu');
+    }
+
+    public function test_product_upload_shows_a_readable_message_when_a_photo_exceeds_the_size_limit(): void
+    {
+        Storage::fake('public');
+        $catalog = Catalog::factory()->umkm()->create();
+        $admin = User::factory()->catalogAdmin($catalog)->create();
+
+        $this->actingAs($admin)->post(route('catalog-admin.products.store'), [
+            'name' => 'Produk dengan foto terlalu besar',
+            'price' => 25000,
+            'photo' => UploadedFile::fake()->image('large.jpg')->size(2049),
+        ])->assertSessionHasErrors([
+            'photo' => 'Ukuran foto tidak boleh lebih dari 2 MB. Foto besar dikompres otomatis sebelum dikirim.',
+        ]);
+
+        $this->assertDatabaseMissing('products', ['name' => 'Produk dengan foto terlalu besar']);
     }
 }

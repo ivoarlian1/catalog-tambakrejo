@@ -34,9 +34,10 @@ class StoreProductRequest extends FormRequest
         return [
             'price.min' => 'Harga tidak boleh kurang dari 0.',
             'price.max' => 'Harga terlalu besar.',
-            'photo.max' => 'Ukuran foto tidak boleh lebih dari 2MB.',
-            'photo.mimes' => 'Foto harus berformat jpeg, jpg, png, atau webp.',
-            'photo.extensions' => 'Foto harus berformat jpeg, jpg, png, atau webp.',
+            'photo.max' => 'Ukuran foto tidak boleh lebih dari 2 MB. Foto besar dikompres otomatis sebelum dikirim.',
+            'photo.uploaded' => 'Foto gagal diunggah. Pilih foto yang ukurannya lebih kecil, lalu coba lagi.',
+            'photo.mimes' => 'Format foto harus JPG, PNG, atau WEBP.',
+            'photo.extensions' => 'Format foto harus JPG, PNG, atau WEBP.',
         ];
     }
 }

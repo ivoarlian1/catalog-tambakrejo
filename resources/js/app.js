@@ -172,9 +172,198 @@ function setupCatalogGalleries() {
     });
 }
 
+function setupImageCompression() {
+    const maxFileSize = 2 * 1024 * 1024;
+    const maxImageDimension = 2560;
+    const compressionQualities = [0.86, 0.76, 0.66, 0.56];
+    const fileInputs = [...document.querySelectorAll('[data-image-compress]')];
+
+    if (fileInputs.length === 0) {
+        return;
+    }
+
+    async function compressImage(file) {
+        let image;
+
+        if (typeof createImageBitmap === 'function') {
+            image = await createImageBitmap(file);
+        } else {
+            image = await new Promise((resolve, reject) => {
+                const objectUrl = URL.createObjectURL(file);
+                const element = new Image();
+
+                element.onload = () => {
+                    URL.revokeObjectURL(objectUrl);
+                    resolve(element);
+                };
+                element.onerror = () => {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error('Foto tidak dapat dibuka.'));
+                };
+                element.src = objectUrl;
+            });
+        }
+
+        try {
+            let width = image.width;
+            let height = image.height;
+            const scale = Math.min(1, maxImageDimension / Math.max(width, height));
+            width = Math.max(1, Math.round(width * scale));
+            height = Math.max(1, Math.round(height * scale));
+
+            for (let attempt = 0; attempt < 12; attempt++) {
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+
+                const context = canvas.getContext('2d');
+
+                if (!context) {
+                    throw new Error('Kompresi foto tidak dapat dijalankan.');
+                }
+
+                context.fillStyle = '#fff';
+                context.fillRect(0, 0, width, height);
+                context.drawImage(image, 0, 0, width, height);
+
+                for (const quality of compressionQualities) {
+                    const blob = await new Promise((resolve, reject) => {
+                        canvas.toBlob((result) => {
+                            if (result) {
+                                resolve(result);
+                            } else {
+                                reject(new Error('Foto tidak dapat dikompres.'));
+                            }
+                        }, 'image/jpeg', quality);
+                    });
+
+                    if (blob.size <= maxFileSize) {
+                        const filename = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+
+                        return new File([blob], filename, {
+                            type: 'image/jpeg',
+                            lastModified: file.lastModified,
+                        });
+                    }
+                }
+
+                width = Math.max(1, Math.floor(width * 0.8));
+                height = Math.max(1, Math.floor(height * 0.8));
+            }
+        } finally {
+            image.close?.();
+        }
+
+        throw new Error('Ukuran foto tetap lebih dari 2 MB setelah dikompres.');
+    }
+
+    fileInputs.forEach((input) => {
+        const form = input.closest('form');
+
+        if (!(input instanceof HTMLInputElement) || !form) {
+            return;
+        }
+
+        const status = document.createElement('p');
+        status.className = 'mt-1 text-sm text-sea';
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        input.insertAdjacentElement('afterend', status);
+
+        form.addEventListener('submit', async (event) => {
+            if (form.dataset.imageCompressionReady === 'true') {
+                delete form.dataset.imageCompressionReady;
+
+                return;
+            }
+
+            if (form.dataset.imageCompressing === 'true') {
+                event.preventDefault();
+
+                return;
+            }
+
+            const oversizedInputs = [...form.querySelectorAll('[data-image-compress]')]
+                .filter((fileInput) => [...(fileInput.files ?? [])]
+                    .some((file) => file.size > maxFileSize && /^image\/(jpeg|png|webp)$/i.test(file.type)));
+
+            if (oversizedInputs.length === 0) {
+                return;
+            }
+
+            event.preventDefault();
+            form.dataset.imageCompressing = 'true';
+            const submitButtons = [...form.querySelectorAll('button[type="submit"], button:not([type])')];
+            const previousDisabledStates = submitButtons.map((button) => button.disabled);
+            submitButtons.forEach((button) => {
+                button.disabled = true;
+            });
+
+            try {
+                for (const fileInput of oversizedInputs) {
+                    const files = [...(fileInput.files ?? [])];
+                    const compressedFiles = [];
+                    const message = fileInput.parentElement?.querySelector('[data-image-compression-status]');
+                    const statusElement = message ?? fileInput.nextElementSibling;
+
+                    if (statusElement instanceof HTMLElement) {
+                        statusElement.textContent = 'Foto besar sedang dikompres. Mohon tunggu...';
+                    }
+
+                    for (const file of files) {
+                        compressedFiles.push(
+                            file.size > maxFileSize && /^image\/(jpeg|png|webp)$/i.test(file.type)
+                                ? await compressImage(file)
+                                : file,
+                        );
+                    }
+
+                    const transfer = new DataTransfer();
+                    compressedFiles.forEach((file) => transfer.items.add(file));
+                    fileInput.files = transfer.files;
+
+                    if (statusElement instanceof HTMLElement) {
+                        statusElement.textContent = 'Foto berhasil dikompres otomatis.';
+                    }
+                }
+
+                submitButtons.forEach((button, index) => {
+                    button.disabled = previousDisabledStates[index];
+                });
+                form.dataset.imageCompressionReady = 'true';
+                form.requestSubmit(event.submitter instanceof HTMLElement ? event.submitter : undefined);
+            } catch {
+                const message = 'Foto tidak dapat dikompres otomatis. Pilih foto JPG, PNG, atau WEBP yang lebih kecil.';
+
+                oversizedInputs.forEach((fileInput) => {
+                    const statusElement = fileInput.nextElementSibling;
+
+                    if (statusElement instanceof HTMLElement) {
+                        statusElement.textContent = message;
+                        statusElement.setAttribute('role', 'alert');
+                    }
+                });
+                submitButtons.forEach((button, index) => {
+                    button.disabled = previousDisabledStates[index];
+                });
+                delete form.dataset.imageCompressing;
+            }
+        });
+
+        status.dataset.imageCompressionStatus = '';
+    });
+
+    document.addEventListener('submit', (event) => {
+        if (event.target instanceof HTMLFormElement && event.target.dataset.imageCompressionReady === 'true') {
+            delete event.target.dataset.imageCompressing;
+        }
+    }, true);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setupMobileNav();
     setupPasswordToggles();
     setupImageViewer();
     setupCatalogGalleries();
+    setupImageCompression();
 });

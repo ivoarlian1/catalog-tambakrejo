@@ -60,4 +60,22 @@ class CatalogActivityTest extends TestCase
             ->assertSee('Pelatihan warga')
             ->assertSee('Kegiatan masyarakat Tambakrejo.');
     }
+
+    public function test_activity_upload_shows_a_readable_message_when_a_photo_exceeds_the_size_limit(): void
+    {
+        Storage::fake('public');
+        $catalog = Catalog::factory()->create();
+        $admin = User::factory()->catalogAdmin($catalog)->create();
+
+        $this->actingAs($admin)
+            ->post(route('catalog-admin.activities.store'), [
+                'title' => 'Kegiatan dengan foto terlalu besar',
+                'photo' => UploadedFile::fake()->image('large.jpg')->size(2049),
+            ])
+            ->assertSessionHasErrors([
+                'photo' => 'Ukuran foto tidak boleh lebih dari 2 MB. Foto besar dikompres otomatis sebelum dikirim.',
+            ]);
+
+        $this->assertDatabaseMissing('catalog_activities', ['title' => 'Kegiatan dengan foto terlalu besar']);
+    }
 }
